@@ -12,6 +12,23 @@ let corsOptions = {
   origin: 'http://localhost:3000',
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
+// Configuracion a BBDD
+const mongoose = require('mongoose');
+
+const user = 'diegograssino1';
+const pass = 'f5l1xpRSCTiBxwPU';
+const db = 'test';
+const uri = `mongodb+srv://${user}:${pass}@cluster0.fvyqeze.mongodb.net/?retryWrites=true&w=majority`;
+
+mongoose
+  .connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('Database connection OK'))
+  .catch(error => console.error(error));
+
+const Product = require('./models/product');
 // Importo el mock
 const MOCK = require('./mocks/mocks');
 
@@ -19,40 +36,47 @@ const MOCK = require('./mocks/mocks');
 const PORT = process.env.PORT || 8000;
 
 // Empiezo a programar los endopoints
-app.get(
-  '/products',
-  cors(corsOptions),
-  (req, res) => {
-    console.log('GET /products');
-    const allProducts = MOCK;
-    res.status(200).send(allProducts);
+app.get('/products', cors(corsOptions), async (req, res) => {
+  console.log('GET /products');
+  const allProducts = await Product.find();
+  res.status(200).send(allProducts);
+});
+
+app.post('/product/new', cors(corsOptions), async (req, res) => {
+  console.log('POST /product/new');
+  const { body } = req;
+  try {
+    const newProduct = new Product(body);
+    await newProduct.save();
+    res.status(200).json(newProduct);
+    console.log('ADD id ' + newProduct._id);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json(error);
   }
-);
+});
 
-app.get(
-  '/product/:id',
-  cors(corsOptions),
-  (req, res) => {
-    const { id } = req.params;
-    console.log('GET /product/' + id);
-    const product = MOCK.find(p => p.id === id);
-
+app.get('/product/:id', cors(corsOptions), async (req, res) => {
+  const { id } = req.params;
+  console.log('GET /product/' + id);
+  try {
+    const product = await Product.findById(id);
+    console.log('SEND info of id ' + product._id);
     res.status(200).json(product);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json(error);
   }
-);
+});
 
-app.post(
-  '/checkout',
-  cors(corsOptions),
-  (req, res) => {
-    const { body } = req;
-    console.log('POST /checkout/');
-    console.log(body);
-    body.id = '1';
+app.post('/checkout', cors(corsOptions), (req, res) => {
+  const { body } = req;
+  console.log('POST /checkout/');
+  console.log(body);
+  body.id = '1';
 
-    res.status(200).json(body);
-  }
-);
+  res.status(200).json(body);
+});
 
 // Ejemplo utilizando el router de express
 app
