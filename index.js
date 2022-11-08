@@ -3,6 +3,24 @@ const express = require('express');
 const app = express();
 // Configuracion del body parser de express
 app.use(express.json());
+// Configuracion de mongoose
+const mongoose = require('mongoose');
+
+const user = 'rcs-3i';
+const pass = 'WI2oouZ9S3PuKwxY';
+const db = '3i-ecomm';
+const uri = `mongodb+srv://${user}:${pass}@cluster0.qcvf3as.mongodb.net/${db}?retryWrites=true&w=majority`;
+
+mongoose
+  .connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('Database connection OK'))
+  .catch(error => console.error(error));
+
+const Product = require('./models/product');
+
 // Configuracion de dotenv
 require('dotenv').config();
 // Configuracion de CORS (evito errores de CORS)
@@ -39,6 +57,7 @@ const PORT = process.env.PORT || 8000;
 app.get('/products', cors(corsOptions), async (req, res) => {
   console.log('GET /products');
   const allProducts = await Product.find();
+  console.log(allProducts);
   res.status(200).send(allProducts);
 });
 
@@ -56,17 +75,11 @@ app.post('/product/new', cors(corsOptions), async (req, res) => {
   }
 });
 
-app.get('/product/:id', cors(corsOptions), async (req, res) => {
+app.get('/product/:id', cors(corsOptions), (req, res) => {
   const { id } = req.params;
   console.log('GET /product/' + id);
-  try {
-    const product = await Product.findById(id);
-    console.log('SEND info of id ' + product._id);
-    res.status(200).json(product);
-  } catch (error) {
-    console.error(error);
-    res.status(400).json(error);
-  }
+  const product = MOCK.find(p => p.id === id);
+  res.status(200).json(product);
 });
 
 app.post('/checkout', cors(corsOptions), (req, res) => {

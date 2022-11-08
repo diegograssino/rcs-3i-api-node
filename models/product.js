@@ -9,5 +9,12 @@ const productSchema = new Schema({
   image: String,
 });
 
+<<<<<<< HEAD
 const Product = mongoose.model('test1', productSchema);
+=======
+const Product = mongoose.model(
+  'products',
+  productSchema
+);
+>>>>>>> origin/main
 module.exports = Product;
