@@ -3,24 +3,22 @@ const User = require('../models/user.js');
 
 router
   .get('/all', async (req, res) => {
-    console.log('GET /products/all');
+    console.log('GET /users/all');
     try {
-      const allProducts = await User.find();
-      res.status(200).send(allProducts);
+      const allUsers = await User.find();
+      res.status(200).send(allUsers);
     } catch (error) {
-      res
-        .status(400)
-        .json({ error: true, message: error });
+      res.status(400).json({ error: true, message: error });
     }
   })
-  .get('/:id', async (req, res) => {
-    const { id } = req.params;
-    console.log('GET /products/' + id);
+  .get('/:name', async (req, res) => {
+    const { name } = req.params;
+    console.log('GET /users/' + name);
     try {
-      const product = await User.findOne({
-        _id: id,
+      const user = await User.findOne({
+        name: name,
       });
-      res.status(200).json(product);
+      res.status(200).json(user);
     } catch (error) {
       res.status(404).json({
         error: true,
@@ -29,18 +27,16 @@ router
     }
   })
   .post('/new', async (req, res) => {
-    console.log('POST /product/new');
+    console.log('POST /users/new');
     const { body } = req;
     try {
-      const newProduct = new User(body);
-      await newProduct.save();
-      res.status(200).json(newProduct);
-      console.log('ADD id ' + newProduct._id);
+      const newUser = new User(body);
+      await newUser.save();
+      res.status(200).json(newUser);
+      console.log('ADD user ' + newUser.name);
     } catch (error) {
       console.log(error);
-      res
-        .status(400)
-        .json({ error: true, message: error });
+      res.status(400).json({ error: true, message: error });
     }
   })
   .put('/update/:id', async (req, res) => {
@@ -48,10 +44,9 @@ router
     const { body } = req;
     console.log('PUT/product/' + id);
     try {
-      const modProduct =
-        await User.findOneAndUpdate(id, body, {
-          useFindAndModify: false,
-        });
+      const modProduct = await User.findOneAndUpdate(id, body, {
+        useFindAndModify: false,
+      });
       res.status(200).json(modProduct);
       console.log('MOD id ' + modProduct._id);
     } catch (error) {
@@ -66,10 +61,9 @@ router
     const { id } = req.params;
     console.log('DELETE/product/' + id);
     try {
-      const delProduct =
-        await User.findOneAndDelete({
-          _id: id,
-        });
+      const delProduct = await User.findOneAndDelete({
+        _id: id,
+      });
       res.status(200).json(delProduct);
       console.log('DEL id ' + delProduct._id);
     } catch (error) {

@@ -5,25 +5,19 @@ const app = express();
 app.use(express.json());
 // Configuracion de mongoose
 const mongoose = require('mongoose');
+// Configuracion de dotenv
+require('dotenv').config();
 
-// TODO: Cambiar a variable de entorno
-const user = 'rcs-3i';
-const pass = 'WI2oouZ9S3PuKwxY';
-const db = '3i-ecomm';
-const uri = `mongodb+srv://${user}:${pass}@cluster0.qcvf3as.mongodb.net/${db}?retryWrites=true&w=majority`;
+// MONGOOSE
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.qcvf3as.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 
 mongoose
   .connect(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() =>
-    console.log('Database connection OK')
-  )
+  .then(() => console.log('Database connection OK'))
   .catch(error => console.error(error));
-
-// Configuracion de dotenv
-require('dotenv').config();
 
 // Configuracion de CORS (evito errores de CORS)
 var cors = require('cors');
@@ -43,12 +37,7 @@ const PORT = process.env.PORT || 8000;
 const productsRoutes = require('./routes/products');
 const usersRoutes = require('./routes/users');
 
-app.use(
-  '/products',
-  cors(corsOptions),
-  productsRoutes
-);
-
+app.use('/products', cors(corsOptions), productsRoutes);
 app.use('/users', cors(corsOptions), usersRoutes);
 
 // Esta funcion es la que corre la API, si no esta, no se autoejecuta.
