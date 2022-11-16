@@ -6,14 +6,11 @@ app.use(express.json());
 // Configuracion de mongoose
 const mongoose = require('mongoose');
 
-// TODO: Cambiar a variable de entorno
-const user = 'rcs-3i';
-const pass = 'WI2oouZ9S3PuKwxY';
-const db = '3i-ecomm';
-const uri = `mongodb+srv://${user}:${pass}@cluster0.qcvf3as.mongodb.net/${db}?retryWrites=true&w=majority`;
+// Configuracion de dotenv
+require('dotenv').config();
 
 mongoose
-  .connect(uri, {
+  .connect(process.env.DB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -21,9 +18,6 @@ mongoose
     console.log('Database connection OK')
   )
   .catch(error => console.error(error));
-
-// Configuracion de dotenv
-require('dotenv').config();
 
 // Configuracion de CORS (evito errores de CORS)
 var cors = require('cors');
