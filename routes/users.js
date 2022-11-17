@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const User = require('../models/user.js');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 router
   .get('/all', async (req, res) => {
@@ -9,9 +9,7 @@ router
       const allUsers = await User.find();
       res.status(200).send(allUsers);
     } catch (error) {
-      res
-        .status(400)
-        .json({ error: true, message: error });
+      res.status(400).json({ error: true, message: error });
     }
   })
   .post('/login', async (req, res) => {
@@ -22,10 +20,7 @@ router
       name: body.name,
     });
 
-    const passwordOk = await bcrypt.compare(
-      body.password,
-      user.password
-    );
+    const passwordOk = await bcrypt.compare(body.password, user.password);
 
     if (user && passwordOk) {
       return res.status(200).json({
@@ -61,10 +56,7 @@ router
 
     // Aplico bcrypt
     const salt = await bcrypt.genSalt(6);
-    const encryptedPassword = await bcrypt.hash(
-      body.password,
-      salt
-    );
+    const encryptedPassword = await bcrypt.hash(body.password, salt);
 
     try {
       const newUser = new User({
@@ -78,9 +70,7 @@ router
       console.log('ADD user ' + newUser.name);
     } catch (error) {
       console.log(error);
-      res
-        .status(400)
-        .json({ error: true, message: error });
+      res.status(400).json({ error: true, message: error });
     }
   })
   .put('/update/:username', async (req, res) => {
@@ -88,13 +78,9 @@ router
     const { body } = req;
     console.log('PUT/users/update' + username);
     try {
-      const modUser = await User.findOneAndUpdate(
-        username,
-        body,
-        {
-          useFindAndModify: false,
-        }
-      );
+      const modUser = await User.findOneAndUpdate(username, body, {
+        useFindAndModify: false,
+      });
       res.status(200).json(modUser);
       console.log('MOD user ' + modUser.name);
     } catch (error) {
@@ -105,37 +91,33 @@ router
       });
     }
   })
-  .delete(
-    '/delete/:username',
-    async (req, res) => {
-      const { username } = req.params;
-      console.log('DELETE/users/' + username);
+  .delete('/delete/:username', async (req, res) => {
+    const { username } = req.params;
+    console.log('DELETE/users/' + username);
 
-      // chequeo previamente si el user es el super usuario para no borrarlo nunca
-      const SUPER_USER = 'admin';
+    // chequeo previamente si el user es el super usuario para no borrarlo nunca
+    const SUPER_USER = 'admin';
 
-      if (username === SUPER_USER) {
-        return res.status(400).json({
-          error: true,
-          message: 'This user cannot be erased!',
-        });
-      }
-
-      try {
-        const delUser =
-          await User.findOneAndDelete({
-            name: username,
-          });
-        res.status(200).json(delUser);
-        console.log('DEL user ' + delUser.name);
-      } catch (error) {
-        console.log(error);
-        res.status(404).json({
-          error: true,
-          message: error,
-        });
-      }
+    if (username === SUPER_USER) {
+      return res.status(400).json({
+        error: true,
+        message: 'This user cannot be erased!',
+      });
     }
-  );
+
+    try {
+      const delUser = await User.findOneAndDelete({
+        name: username,
+      });
+      res.status(200).json(delUser);
+      console.log('DEL user ' + delUser.name);
+    } catch (error) {
+      console.log(error);
+      res.status(404).json({
+        error: true,
+        message: error,
+      });
+    }
+  });
 
 module.exports = router;
