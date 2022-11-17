@@ -14,9 +14,7 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() =>
-    console.log('Database connection OK')
-  )
+  .then(() => console.log('Database connection OK'))
   .catch(error => console.error(error));
 
 // Configuracion de CORS (evito errores de CORS)
@@ -37,13 +35,9 @@ const PORT = process.env.PORT || 8000;
 const productsRoutes = require('./routes/products');
 const usersRoutes = require('./routes/users');
 
-app.use(
-  '/products',
-  cors(corsOptions),
-  productsRoutes
-);
+app.use('/products', productsRoutes);
 
-app.use('/users', cors(corsOptions), usersRoutes);
+app.use('/users', usersRoutes);
 
 // Esta funcion es la que corre la API, si no esta, no se autoejecuta.
 app.listen(PORT, () => {

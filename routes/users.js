@@ -1,9 +1,17 @@
+const express = require('express');
+const app = express();
 const router = require('express').Router();
 const User = require('../models/user.js');
 const bcrypt = require('bcryptjs');
+const cors = require('cors');
+app.use(cors());
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
 
 router
-  .get('/all', async (req, res) => {
+  .get('/all', cors(corsOptions), async (req, res) => {
     console.log('GET /users/all');
     try {
       const allUsers = await User.find();
@@ -26,6 +34,7 @@ router
       return res.status(200).json({
         error: null,
         message: 'User and password OK',
+        role: user.role || 'user',
       });
     } else {
       return res.status(400).json({

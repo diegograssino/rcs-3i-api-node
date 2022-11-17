@@ -1,19 +1,25 @@
+const express = require('express');
+const app = express();
 const router = require('express').Router();
 const Product = require('../models/product');
+const cors = require('cors');
+app.use(cors());
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
 
 router
-  .get('/all', async (req, res) => {
+  .get('/all', cors(corsOptions), async (req, res) => {
     console.log('GET /products/all');
     try {
       const allProducts = await Product.find();
       res.status(200).send(allProducts);
     } catch (error) {
-      res
-        .status(400)
-        .json({ error: true, message: error });
+      res.status(400).json({ error: true, message: error });
     }
   })
-  .get('/:id', async (req, res) => {
+  .get('/:id', cors(corsOptions), async (req, res) => {
     const { id } = req.params;
     console.log('GET /products/' + id);
     try {
@@ -38,9 +44,7 @@ router
       console.log('ADD id ' + newProduct._id);
     } catch (error) {
       console.log(error);
-      res
-        .status(400)
-        .json({ error: true, message: error });
+      res.status(400).json({ error: true, message: error });
     }
   })
   .put('/update/:id', async (req, res) => {
@@ -48,10 +52,9 @@ router
     const { body } = req;
     console.log('PUT/product/' + id);
     try {
-      const modProduct =
-        await Product.findOneAndUpdate(id, body, {
-          useFindAndModify: false,
-        });
+      const modProduct = await Product.findOneAndUpdate(id, body, {
+        useFindAndModify: false,
+      });
       res.status(200).json(modProduct);
       console.log('MOD id ' + modProduct._id);
     } catch (error) {
@@ -66,10 +69,9 @@ router
     const { id } = req.params;
     console.log('DELETE/product/' + id);
     try {
-      const delProduct =
-        await Product.findOneAndDelete({
-          _id: id,
-        });
+      const delProduct = await Product.findOneAndDelete({
+        _id: id,
+      });
       res.status(200).json(delProduct);
       console.log('DEL id ' + delProduct._id);
     } catch (error) {
