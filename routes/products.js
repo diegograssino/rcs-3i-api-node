@@ -10,7 +10,7 @@ const corsOptions = {
 };
 
 router
-  .get('/all', cors(corsOptions), async (req, res) => {
+  .get('/all', async (req, res) => {
     console.log('GET /products/all');
     try {
       const allProducts = await Product.find();
@@ -19,7 +19,7 @@ router
       res.status(400).json({ error: true, message: error });
     }
   })
-  .get('/:id', cors(corsOptions), async (req, res) => {
+  .get('/:id', async (req, res) => {
     const { id } = req.params;
     console.log('GET /products/' + id);
     try {
