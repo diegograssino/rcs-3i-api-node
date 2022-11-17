@@ -1,17 +1,9 @@
-const express = require('express');
-const app = express();
 const router = require('express').Router();
 const User = require('../models/user.js');
 const bcrypt = require('bcryptjs');
-const cors = require('cors');
-app.use(cors());
-const corsOptions = {
-  origin: 'http://localhost:3000',
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
 
 router
-  .get('/all', cors(corsOptions), async (req, res) => {
+  .get('/all', async (req, res) => {
     console.log('GET /users/all');
     try {
       const allUsers = await User.find();
@@ -20,7 +12,7 @@ router
       res.status(400).json({ error: true, message: error });
     }
   })
-  .post('/login', cors(corsOptions), async (req, res) => {
+  .post('/login', async (req, res) => {
     const { body } = req;
     console.log('POST /users/login');
 
@@ -43,7 +35,7 @@ router
       });
     }
   })
-  .post('/register', cors(corsOptions), async (req, res) => {
+  .post('/register', async (req, res) => {
     console.log('POST /users/register');
     const { body } = req;
 
@@ -82,7 +74,7 @@ router
       res.status(400).json({ error: true, message: error });
     }
   })
-  .put('/update/:username', cors(corsOptions), async (req, res) => {
+  .put('/update/:username', async (req, res) => {
     const { username } = req.params;
     const { body } = req;
     console.log('PUT/users/update' + username);
