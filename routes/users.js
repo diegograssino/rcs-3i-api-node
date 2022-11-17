@@ -20,7 +20,7 @@ router
       res.status(400).json({ error: true, message: error });
     }
   })
-  .post('/login', async (req, res) => {
+  .post('/login', cors(corsOptions), async (req, res) => {
     const { body } = req;
     console.log('POST /users/login');
 
@@ -43,7 +43,7 @@ router
       });
     }
   })
-  .post('/register', async (req, res) => {
+  .post('/register', cors(corsOptions), async (req, res) => {
     console.log('POST /users/register');
     const { body } = req;
 
@@ -82,7 +82,7 @@ router
       res.status(400).json({ error: true, message: error });
     }
   })
-  .put('/update/:username', async (req, res) => {
+  .put('/update/:username', cors(corsOptions), async (req, res) => {
     const { username } = req.params;
     const { body } = req;
     console.log('PUT/users/update' + username);
@@ -100,7 +100,7 @@ router
       });
     }
   })
-  .delete('/delete/:username', async (req, res) => {
+  .delete('/delete/:username', cors(corsOptions), async (req, res) => {
     const { username } = req.params;
     console.log('DELETE/users/' + username);
 
