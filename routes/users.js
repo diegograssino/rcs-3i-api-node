@@ -100,7 +100,7 @@ router
       });
     }
   })
-  .delete('/delete/:username', cors(corsOptions), async (req, res) => {
+  .delete('/delete/:username', async (req, res) => {
     const { username } = req.params;
     console.log('DELETE/users/' + username);
 
