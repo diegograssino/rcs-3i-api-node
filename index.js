@@ -35,9 +35,9 @@ const PORT = process.env.PORT || 8000;
 const productsRoutes = require('./routes/products');
 const usersRoutes = require('./routes/users');
 
-app.use('/products', productsRoutes);
+app.use('/products', cors(corsOptions), productsRoutes);
 
-app.use('/users', usersRoutes);
+app.use('/users', cors(corsOptions), usersRoutes);
 
 // Esta funcion es la que corre la API, si no esta, no se autoejecuta.
 app.listen(PORT, () => {
